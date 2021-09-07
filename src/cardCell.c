@@ -6,3 +6,25 @@
  */
 
 #include "cardCell.h"
+
+cardCellContent* initCardCell(int nRow, int nCol, char nLetter, char nDigit) {
+    cardCellContent* newCell = (cardCellContent*) malloc(sizeof(cardCellContent));
+    newCell->row = nRow;
+    newCell->col = nCol;
+    newCell->letter = nLetter;
+    newCell->digit = nDigit;
+    newCell->matched = false;
+    return newCell;
+}
+
+char generateRandomDigit() {
+    return '0' + (rand() % (9 + 1));
+}
+
+char generateRandomLetter() {
+    return 'A' + (rand() % 26);
+}
+
+bool isMarked(cardCellContent cardCell){
+    return cardCell.letter >= 97;
+}

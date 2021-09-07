@@ -9,6 +9,8 @@
 #define CARDCELL_H_
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
 
 typedef struct
 {
@@ -18,5 +20,11 @@ typedef struct
 	char digit;
 	bool matched;
 }cardCellContent;
+
+cardCellContent* initCardCell(int nRow, int nCol, char nLetter, char nDigit);
+// "Caller" Functions
+char generateRandomDigit();
+char generateRandomLetter();
+bool isMarked(cardCellContent cardCell);
 
 #endif

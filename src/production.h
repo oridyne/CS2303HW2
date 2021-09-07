@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include <string.h>//strncpy
 #include <stdlib.h>//strtol
-#include "space.h"
+#include "bingoBoard.h"
 #include "LinkedList.h"
 #include "cardCell.h"
 

@@ -13,7 +13,7 @@
 bool isEmpty(LLNode* lp)
 {
 	bool ans = false;
-	if(lp->payP == (cardCellContent*)0)
+	if(lp->cardCell == (cardCellContent*)0)
 	{
 		ans = true;
 	}
@@ -25,21 +25,21 @@ LLNode* makeEmptyLinkedList()
 	LLNode* lp = (LLNode*) malloc(sizeof(LLNode));
 	lp->next = (struct LLNode*)0;
 	lp->prev = (struct LLNode*)0;
-	lp->payP = (cardCellContent*)0;
+	lp->cardCell = (cardCellContent*)0;
 
 	return lp;
 }
 
-void savecardCellContent(LLNode* lp, cardCellContent* mp)
+void saveCardCellContent(LLNode* lp, cardCellContent* mp)
 {
-	//if the list is empty, then make payP be mp
+	//if the list is empty, then make cardCell be mp
 	//else traverse the list,
 	//make a new list element
 	//put mp in that
 	//attach the new list element to the existing list
 	if(isEmpty(lp))
 	{
-		lp->payP = mp;
+		lp->cardCell = mp;
 	}
 	else
 	{
@@ -52,15 +52,17 @@ void savecardCellContent(LLNode* lp, cardCellContent* mp)
 
 		//make a new element, attach mp to it, wire up the new element
 		LLNode* newList = makeEmptyLinkedList();
-		newList->payP = mp;
+		newList->cardCell = mp;
 		temp->next = (struct LLNode*)newList;
 		newList->prev = (struct LLNode*) temp;
+
+
 	}
 }
 
 cardCellContent* dequeueLIFO(LLNode* lp)
 {
-	cardCellContent* payP = (cardCellContent*)0;
+	cardCellContent* cardCell = (cardCellContent*)0;
 	if(isEmpty(lp))
 	{
 		puts("Trying to dequeue from empty.");
@@ -76,14 +78,14 @@ cardCellContent* dequeueLIFO(LLNode* lp)
 		//now temp points to the last element
 
 
-		payP = temp->payP;
-		temp->payP = (cardCellContent*)0;
+		cardCell = temp->cardCell;
+		temp->cardCell = (cardCellContent*)0;
 
 		//remove the last, now empty, element
 		if(temp->prev)
 		{
 			temp=(LLNode*)temp->prev;
-			//free(temp->next);
+			free(temp->next);
 
 			temp->next = (struct LLNode*)0;
 		}
@@ -94,7 +96,7 @@ cardCellContent* dequeueLIFO(LLNode* lp)
 		puts("returning from dequeue");fflush(stdout);
 	}
 
-	return payP;
+	return cardCell;
 }
 
 backFromDQFIFO* dequeueFIFO(LLNode* lp)
@@ -109,7 +111,7 @@ backFromDQFIFO* dequeueFIFO(LLNode* lp)
 	{
 		fp->newQHead= (LLNode*) lp->next;
 	}
-	fp->mp= lp->payP;//all return values are set
+	fp->mp= lp->cardCell;//all return values are set
 	if(lp->next != (struct LLNode*)0)
 	{
 		//length list is >1
@@ -121,15 +123,10 @@ backFromDQFIFO* dequeueFIFO(LLNode* lp)
 
 LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 {
-	LLNode* retHead = hP;//only changes if first element gets removed
+	LLNode* retHead = hP; //only changes if first element gets removed
 	//find the cardCellContent
 	//use the structure of a list, namely, list is empty or element followed by list
-	if(isEmpty(hP))
-	{
-		//nothing to do
-	}
-	else
-	{
+	if(!isEmpty(hP)) {
 		//puts("list is not empty");fflush(stdout);
 		LLNode* altHead = (LLNode*)hP->next;
 		//find the item, if it is there
@@ -138,7 +135,7 @@ LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 		while((!done) && temp->next)
 		{
 			//are we there yet?
-			if(temp->payP == pP)
+			if(temp->cardCell == pP)
 			{
 				done=true;
 				//puts("found it 1");fflush(stdout);
@@ -149,7 +146,7 @@ LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 			}
 		}
 		//either we are pointing to the correct element, or we are at the end, or both
-		if((temp->payP) == pP)
+		if((temp->cardCell) == pP)
 		{
 			//puts("found it 2");fflush(stdout);
 			//found it, remove it
@@ -161,18 +158,20 @@ LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 				if(!(temp->next))
 				{//if there is no next
 					//remove cardCellContent, return empty list
-					hP->payP = (cardCellContent*)0;
+					hP->cardCell = (cardCellContent*)0;
 				}
 				else //not of length 1
-				{ //not freeing the cardCellContent, but freeing the first list element
-					puts("found it at first element of list with length > 1");fflush(stdout);
-					free(hP);
+				{
+//					puts("found it at first element of list with length > 1");fflush(stdout);
+                    free(temp->cardCell);
+					free(temp);
+					altHead->prev=NULL;
 					retHead = altHead;
 				}
 			}
 			else //not found at first location in list
 			{
-				puts("found it not at first element");fflush(stdout);
+//				puts("found it not at first element");fflush(stdout);
 				//save the linkages
 				//found element has a next
 				//found element has a prev
@@ -181,15 +180,17 @@ LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 				LLNode* prevPart = (LLNode*) temp->prev;//non-zero because not at first element
 				LLNode* nextPart = (LLNode*) temp->next;//could be zero, if found at last element
 				prevPart->next = (struct LLNode*) nextPart;//RHS is 0 if at end
+
 				//puts("after setting the next of the previous");fflush(stdout);
                // printf("Next is %p, %d\n", nextPart, (bool)nextPart);fflush(stdout);
 				if((bool)nextPart)//don't need guarded block if element found at end of list
 				{
 					//puts("before setting the previous of the next");fflush(stdout);
 					nextPart->prev = (struct LLNode*) prevPart;
-
 				}
 				//puts("after handling the  previous of the next");fflush(stdout);
+                free(temp->cardCell);
+                free(temp);
 			}//end of not found at first location
 		}//end of found it
 		else
@@ -201,4 +202,27 @@ LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 	}
 	//printf("Returning %p\n", retHead); fflush(stdout);
 	return retHead;
+}
+
+// No memory leaks
+void deleteList(LLNode* node) {
+    LLNode* tmp;
+    while (node != NULL) {
+        tmp = node;
+        node = (LLNode *) node->next;
+        if(tmp->cardCell != NULL) {
+            free(tmp->cardCell);
+        }
+        free(tmp);
+    }
+}
+
+void printHistory(LLNode *hp) {
+    printf("Call history: ");
+    LLNode* currNode = hp;
+    while(currNode != NULL) {
+        printf("%c%c ",currNode->cardCell->letter,currNode->cardCell->digit);
+        currNode = (LLNode *) currNode->next;
+    }
+    puts("");
 }

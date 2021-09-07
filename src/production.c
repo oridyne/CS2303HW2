@@ -60,10 +60,12 @@ bool production(int argc, char* argv[])
 		//obtain space for bingo card
 
 		cardCellContent** theSpaceP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
-	    initSpace(theSpaceP, 5);
+	    initBoard(theSpaceP, 5);
 
 	   // displayCard
-        displaySpace(theSpaceP, 5);
+        displayBoard(theSpaceP, 5);
+
+
         //the caller is going call some random values
 	    for(int i = 0; i<nCalls; i++)
 	    {
@@ -75,25 +77,23 @@ bool production(int argc, char* argv[])
 	    }
 
 	    //printHistory
-
+        deleteList(theListP);
+	    deleteBoard(theSpaceP, 5);
 		return answer;
 }
-bool getYesNo(char* query)
-{
-   bool answer = true; //so far
-   char said = 'x';
-   do
-   {
-	 printf("%s (y/n):",query);
-     fflush(stdout);
-     fflush(stdin);
-     scanf("%c",&said);
-   }while((said!= 'y')&&(said!='n'));
-   if(said=='n')
-   {
-	   answer=false;
-   }
 
-
-   return answer;
+bool getYesNo(char* query) {
+    bool answer = true; //so far
+    char said = 'x';
+    while((said != 'y') && (said != 'n')) {
+        printf("%s (y/n):",query);
+        fflush(stdout);
+        scanf("%s",&said);
+    }
+    if(said == 'n') {
+        answer = false;
+    } else if(said == 'y') {
+        answer = true;
+    }
+    return answer;
 }
