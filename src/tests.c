@@ -314,11 +314,12 @@ bool testCheckBoard() {
     initBoard(theSpaceP, 5);
     for(int i = 0; i < 5; i++) {
        for(int j = 0; j < 5; j++) {
-           printf("Combo: %c%c\n", testBoard[(i*10+j*2)], testBoard[i*10+j*2+1]);
-//           initCardCell(i, j, testBoard[i+j*2], testBoard[i+j*2+1]);
+           //printf("Combo: %c%c\n", testBoard[(i*10+j*2)], testBoard[i*10+j*2+1]);
+           setSpace(theSpaceP, i, j, 5, testBoard[i*10+j*2], testBoard[i*10+j*2+1]);
        }
     }
-
+    displayBoard(theSpaceP,5);
+    deleteBoard(theSpaceP,5);
 
     return ok;
 }
