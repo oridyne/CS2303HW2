@@ -1,10 +1,11 @@
 Debug
 cmake-build-debug
 cmake-build-wsl-debug
+ScreenShots
 .settings
+.idea
 .cproject
 .project
-.idea
 build
 vgcore*
 .gdb_history

@@ -14,9 +14,10 @@ bool tests();
 
 bool testReadFile();
 bool testSetSpace();
+bool testFindSpace();
 bool testGotAdjacencyMatrix();
 bool testMakeLList();
-bool testEnqueue();
+bool testGenerateCall();
 bool testRemoveFromList();
 bool testPrintHistory();
 bool testGenBoardNoDupe();

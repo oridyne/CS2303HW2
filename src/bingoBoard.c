@@ -6,7 +6,7 @@
  */
 #include "bingoBoard.h"
 
-void initBoard(cardCellContent** theCardCell, int boardColSize)
+void genDefaultBoard(cardCellContent** theCardCell, int boardColSize)
 {
 	for(int row = 0; row < boardColSize; row++)
 	{
@@ -36,7 +36,7 @@ void displayBoard(cardCellContent** theCardCell, int boardColSize)
 
 bool setSpace(cardCellContent** theCardCell, int fRow, int fCol, int boardColSize, char sLetter, char sDigit) {
     if(fRow > boardColSize || fCol > boardColSize) {
-        puts("setSpace failed: the input row & column have to be <= the board size");
+        puts("setSpace: the input row & column have to be <= the board size");
         return false;
     }
     cardCellContent** currCell = theCardCell + fRow * boardColSize + fCol;
@@ -62,10 +62,9 @@ void genRandBoard(cardCellContent** theCardCell, int boardColSize) {
     for(int row = 0; row < boardColSize; row++) {
         for(int col = 0; col < boardColSize; col++) {
             int currIndex = row * boardColSize + col;
-            cardCellContent** currCell = theCardCell + currIndex;
-            bool duplicate = false;
             char rLetter = 'A';
             char rDigit = '0';
+            bool duplicate = false;
             do {
                 rDigit = generateRandomDigit();
                 rLetter = generateRandomLetter();
@@ -77,49 +76,60 @@ void genRandBoard(cardCellContent** theCardCell, int boardColSize) {
                     }
                 }
             } while (duplicate);
-            (*currCell)->digit = rDigit;
-            (*currCell)->letter = rLetter;
+            cardCellContent* x = initCardCell(row, col, rLetter, rDigit);
+            cardCellContent** currCell = theCardCell + currIndex;
+            *currCell = x;
         }
     }
 }
 
 bool checkBoard(cardCellContent** theCardCell, int boardColSize) {
     bool ans = false;
-    int markCount[2] = {0, 0};
-    //check hor and vert
+    int markCount[4] = {0,0,0,0};
+    // Check Horizontal and Vertical
     for(int row = 0; row < boardColSize; row++) {
+        // Horizontal check
+        markCount[0] = 0;
+        // Vertical check
+        markCount[1] = 0;
         for (int col = 0; col <  boardColSize; ++col) {
             cardCellContent** currentCellHor = theCardCell + row * boardColSize + col;
-            cardCellContent** currentCellVer = theCardCell + col*boardColSize + row;
+            cardCellContent** currentCellVer = theCardCell + col * boardColSize + row;
             if((*currentCellHor)->letter >= 97) {
                 markCount[0]++;
-            } else if((*currentCellVer)->letter >= 97) {
+            }
+            if((*currentCellVer)->letter >= 97) {
                 markCount[1]++;
             }
-        }
-        if(markCount[0] == 5 || markCount[1] == 5) {
-            ans = true;
-            break;
-        }
-    }
-
-    cardCellContent** middleCell = theCardCell + (boardColSize/2)*boardColSize + (boardColSize/2);
-    if((*middleCell)->letter >= 97) {
-        if(!ans) {
-            markCount[0] = 0;
-            markCount[1] = 0;
-            for (int row = 0; row < boardColSize; ++row) {
-                cardCellContent** currCellDP = theCardCell + row * boardColSize + row;
-                int backCount = ((boardColSize - 1) - row);
-                cardCellContent** currCellDN = theCardCell + backCount * boardColSize + backCount;
-                if((*currCellDP)-> letter >= 97) {
-                    markCount[0]++;
-                } else if ((*currCellDN) -> letter >= 97) {
-                    markCount[1]++;
-                }
+            if(markCount[0] == 5) {
+                printf("Bingo at row %d\n", row+1);
+                ans = true;
+            }
+            if(markCount[1] == 5){
+                printf("Bingo at column %d\n", row+1);
+                ans = true;
             }
         }
+        // Check diagonals
+        cardCellContent** middleCell = theCardCell + (boardColSize/2)*boardColSize + (boardColSize/2);
+        if((*middleCell)->letter >= 97 && !ans) {
+            int backCount = ((boardColSize - 1) - row);
+            cardCellContent** currCellDiagP = theCardCell + row * boardColSize + row;
+            cardCellContent** currCellDiagN = theCardCell + row * boardColSize + backCount;
+            if((*currCellDiagP)-> letter >= 97) {
+                markCount[2]++;
+            }
+            if ((*currCellDiagN) -> letter >= 97) {
+                markCount[3]++;
+            }
+            if(markCount[2] == 5 || markCount[3] == 5) {
+                printf("Bingo on diagonal\n");
+                ans = true;
+            }
+        }
+        if(ans) break;
     }
+
 
     return ans;
 }

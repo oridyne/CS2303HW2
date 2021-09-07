@@ -60,6 +60,23 @@ void saveCardCellContent(LLNode* lp, cardCellContent* mp)
 	}
 }
 
+cardCellContent* getCardCellContent(LLNode* lp, char gLetter, char gDigit) {
+    LLNode* temp = lp;
+    cardCellContent* retP = NULL;
+    bool found = false;
+
+    while(temp != NULL && found == false) {
+        if(temp->cardCell) {
+            if(gDigit == temp->cardCell->digit && gLetter == temp->cardCell->letter) {
+                found = true;
+                retP = temp->cardCell;
+            }
+        }
+        temp=(LLNode*) temp->next;
+    }
+    return retP;
+}
+
 cardCellContent* dequeueLIFO(LLNode* lp)
 {
 	cardCellContent* cardCell = (cardCellContent*)0;
@@ -220,9 +237,14 @@ void deleteList(LLNode* node) {
 void printHistory(LLNode *hp) {
     printf("Call history: ");
     LLNode* currNode = hp;
+    int numCalls = 0;
     while(currNode != NULL && currNode->cardCell != NULL) {
+        if(numCalls % 10 == 0) {
+            puts("");
+        }
         printf("%c%c ",currNode->cardCell->letter,currNode->cardCell->digit);
+        numCalls++;
         currNode = (LLNode *) currNode->next;
     }
-    puts("");
+    printf("\nNumber of calls: %d\n",numCalls);
 }

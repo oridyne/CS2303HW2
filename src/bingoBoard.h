@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "cardCell.h"
+#include "caller.h"
 
 //typedef struct
 //{
@@ -23,7 +24,7 @@
 //	bool matched;
 //}cardCellContent;
 
-void initBoard(cardCellContent**, int);
+void genDefaultBoard(cardCellContent**, int);
 void displayBoard(cardCellContent**, int);
 bool setSpace(cardCellContent** theCardCell, int fRow, int fCol, int boardColSize, char sLetter, char sDigit);
 cardCellContent** findSpace(cardCellContent** theCardCell, char sLetter, char sDigit, int boardColSize);

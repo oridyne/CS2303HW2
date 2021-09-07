@@ -15,62 +15,95 @@
 bool tests()
 {
 	bool answer = false;
-
+	bool ok1,ok2,ok3,ok4,ok5,ok6,ok7,ok8,ok9 = false;
 	//test the functions that get used
 	//order the tests from simplest first -- this produces building blocks for use in more complex tests
 	//check how functions are used in production code, this gives clues about how to provide the arguments for the invocation
-	bool ok1 = testReadFile();
-	bool ok2 = testSetSpace();
-	bool ok3 = testMakeLList();
-	bool ok4 = testEnqueue();
-	bool ok5 = testPrintHistory();
-	bool ok6 = testGenBoardNoDupe();
-	bool ok7 = testRemoveFromList();
-	bool ok8 = testCheckBoard();
-	answer = ok1 && ok2 && ok3 && ok4 && ok5 && ok6 && ok7 && ok8;
+	ok1 = testReadFile();
+	ok2 = testSetSpace();
+	if(ok2) ok3 = testFindSpace();
+    ok4 = testMakeLList();
+    if(ok4) {
+        ok5 = testGenerateCall();
+        ok6 = testPrintHistory();
+    }
+    ok7 = testGenBoardNoDupe();
+    if(ok4) ok8 = testRemoveFromList();
+    if(ok2) ok9 = testCheckBoard();
+    answer = ok1 && ok2 && ok3 && ok4 && ok5 && ok6 && ok7 && ok8 && ok9;
 	//answer = true;
 	return answer;
 }
 
 bool testReadFile()
 {
-	puts("starting testReadFile"); fflush(stdout);
+	puts("\nstarting testReadFile"); fflush(stdout);
 	bool ok = true;
 
-	cardCellContent** theSpaceP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
-	cardCellContent** nextSpace = theSpaceP+1;
-	printf("first is %x and second is %x \n", theSpaceP, nextSpace);
+	cardCellContent** theBoardP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
+	cardCellContent** nextSpace = theBoardP+1;
+	printf("first is %x and second is %x \n", theBoardP, nextSpace);
 
-	cardCellContent* where = (cardCellContent*) theSpaceP;
+	cardCellContent* where = (cardCellContent*) theBoardP;
 	cardCellContent* whereNext = where+1;
-	printf("first is %x and second is %x\n", where, whereNext);
+	printf("first is %x and second is %x\n\n", where, whereNext);
 
-	free(theSpaceP);
+	free(theBoardP);
 	return ok;
 }
 
 bool testSetSpace() {
+    puts("starting testSetSpace");
     bool ok = true;
-    cardCellContent** theSpaceP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
-    initBoard(theSpaceP, 5);
+    cardCellContent** theBoardP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
+    genDefaultBoard(theBoardP, 5);
     // test check for bounds
-    if(!setSpace(theSpaceP, 6, 5, 5, 'A', '0')) {
-        puts("Out of bounds row check passed");
+    if(setSpace(theBoardP, 6, 5, 5, 'A', '0')) {
+        puts("Out of bounds row check failed");
+        ok = false;
     }
-    if(!setSpace(theSpaceP,4,6,5, 'A', '0')) {
-        puts("Out of bounds col check passed");
+    if(setSpace(theBoardP,4,6,5, 'A', '0')) {
+        puts("Out of bounds col check failed");
+        ok = false;
     }
     char testLetter = 'R';
     char testDigit = '5';
-    setSpace(theSpaceP, 3, 4, 5, testLetter, testDigit);
-    cardCellContent** currCell = theSpaceP + 3 * 5 + 4;
-    if((*currCell)->letter == testLetter && (*currCell)->digit == testDigit) {
-        puts("setting space test passed");
-    } else {
-        puts("setting space test passed");
+    setSpace(theBoardP, 3, 4, 5, testLetter, testDigit);
+    cardCellContent** currCell = theBoardP + 3 * 5 + 4;
+
+    if((*currCell)->letter != testLetter && (*currCell)->digit != testDigit) {
+        puts("Setting space test failed");
         ok = false;
     }
-    deleteBoard(theSpaceP, 5);
+    deleteBoard(theBoardP, 5);
+
+    if(ok) {
+        puts("test setSpace passed\n");
+    } else {
+        puts("test setSpace failed\n");
+    }
+    return ok;
+}
+
+bool testFindSpace() {
+    puts("starting testFindSpace");
+    bool ok = true;
+    cardCellContent** theBoardP = (cardCellContent**) malloc(5 * 5 * sizeof(cardCellContent*));
+    genDefaultBoard(theBoardP,5);
+    setSpace(theBoardP, 0, 4, 5, 'G', '7');
+    setSpace(theBoardP, 3, 4, 5, 'O', '4');
+    cardCellContent** matchP = findSpace(theBoardP, 'G', '7', 5);
+    if((*matchP)->row != 0 && (*matchP)->col != 4) {
+        ok = false;
+    }
+    deleteBoard(theBoardP, 5);
+    if(ok)
+    {
+        puts("test findSpace did pass.\n");
+    }
+    else {
+        puts("test findSpace did not pass.\n");
+    }
     return ok;
 }
 
@@ -93,52 +126,44 @@ bool testMakeLList()
 		ok = false;
 	}
 	//test case 2:
-	//TODO more test cases here
-    cardCellContent* cell1 = initCardCell(0,0,'R','8');
-    saveCardCellContent(theListP, cell1);
+    cardCellContent* newCell1 = initCardCell(0,0,'R','8');
+    saveCardCellContent(theListP, newCell1);
 
-    if(theListP->cardCell != cell1) {
+    if(theListP->cardCell != newCell1) {
+        ok = false;
+    }
+
+    cardCellContent* newCell2 = initCardCell(0, 0, 'A', '6');
+    saveCardCellContent(theListP, newCell2);
+
+    cardCellContent* newCell3 = initCardCell(0, 0, 'N', '4');
+    saveCardCellContent(theListP, newCell3);
+
+    if(getCardCellContent(theListP, 'A', '6') != newCell2) {
         ok = false;
     }
 
 	if(ok)
 	{
-		puts("test make LList did pass.");
+		puts("test make LList did pass.\n");
 	}
 	else {
-        puts("test make LList did not pass.");
+        puts("test make LList did not pass.\n");
     }
 	deleteList(theListP);
 
 	return ok;
 }
 
-bool testEnqueue() {
+bool testGenerateCall() {
     bool ok = true;
-    int nCalls = 25;
-    LLNode* theListP = makeEmptyLinkedList();
-    for(int i = 0; i<nCalls; i++) {
-		generateCall(theListP);
-        /* bool duplicate = false; */
-        /* char rLetter = 'A'; */
-        /* char rDigit = '0'; */
-        /* do { */
-        /*     rDigit = generateRandomDigit(); */
-        /*     rLetter = generateRandomLetter(); */
-        /*     duplicate = false; */
-        /*     LLNode* temp = theListP; */
-        /*     while(temp != NULL && !duplicate && temp->cardCell != NULL) { */
-        /*         if(rDigit == temp->cardCell->digit && rLetter == temp->cardCell->letter) { */
-        /*             duplicate = true; */
-        /*         } */
-        /*         temp = (LLNode *) temp->next; */
-        /*     } */
-        /* } while (duplicate); */
-        /* cardCellContent* newCell = initCardCell(0,0,rLetter,rDigit); */
-        /* saveCardCellContent(theListP, newCell); */
-    }
-    printHistory(theListP);
+    puts("starting testGenerateCall");
 
+    LLNode* theListP = makeEmptyLinkedList();
+    int nCalls = 25;
+    for(int i = 0; i < nCalls; i++) {
+		generateCall(theListP);
+    }
     int count = 0;
     puts("Should have 25 in queue");
     LLNode* temp = theListP;
@@ -150,23 +175,21 @@ bool testEnqueue() {
     if(count != nCalls) {
         ok = false;
     }
-
     deleteList(theListP);
-	if(ok)
-	{
-		puts("testEnqueue did pass.");
-	}
-	else
-	{
-		puts("testEnqueue did not pass.");
+	if(ok) {
+		puts("testGenerateCall did pass.\n");
+	} else {
+		puts("testGenerateCall did not pass.\n");
 	}
 	return ok;
 }
 
+// Never utilized this function in production
 bool testRemoveFromList()
 {
 	bool ok = true;
-	//cases:
+    puts("starting testRemoveFromList");
+    //cases:
 	//1 list is empty:return same list
 	//2 list is of length one, and item is present: return empty list
 	//3 list is of length one, and item is not present: return same list
@@ -262,111 +285,129 @@ bool testRemoveFromList()
 //
 //	}
 //	printf("testRemove case 6 with %d\n", ok); fflush(stdout);
+    puts("");
 	return ok;
 }
 
 bool testPrintHistory()
 {
 	bool ok = true;
+    puts("starting testPrintHistory");
 	LLNode* theListP = makeEmptyLinkedList();
     puts("Should display:");
-    puts("Call history: A0 A1 A2 A3 A4 \n");
+    puts("Call history:\nA0 A1 A2 A3 A4 \nNumber of calls: 5\n");
 	for(int i = 0; i < 5; i++) {
 	    saveCardCellContent(theListP, initCardCell(0, i, 'A', '0' + i ));
 	}
 	printHistory(theListP);
-	if(getYesNo("Is this correct?")) {
-	    puts("testPrintHistory passed");
-	} else {
-	    puts("testPrintHistory failed");
+	if(!getYesNo("Is this correct?")) {
 	    ok = false;
     }
 	deleteList(theListP);
 
 	if(ok)
 	{
-		puts("testprintHistory did pass.");
+		puts("test printHistory did pass.\n");
 	}
 	else
 	{
-		puts("testprintHistory did not pass.");
+		puts("test printHistory did not pass.\n");
 	}
 	return ok;
 }
 
 bool testGenBoardNoDupe() {
     bool ok = true;
-    cardCellContent** theSpaceP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
-    initBoard(theSpaceP, 5);
-    genRandBoard(theSpaceP, 5);
-    displayBoard(theSpaceP, 5);
+    puts("starting testGenBoardNoDupe");
+    cardCellContent** theBoardP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
+    genRandBoard(theBoardP, 5);
+    displayBoard(theBoardP, 5);
     if(!getYesNo("Are there any duplicate entries?")) {
-        puts("testGenBoardNoDupe passed");
+        puts("testGenBoardNoDupe passed\n");
     } else {
-        puts("testGenBoardNoDupe failed");
+        puts("testGenBoardNoDupe failed\n");
         ok = false;
     }
-    deleteBoard(theSpaceP, 5);
+    deleteBoard(theBoardP, 5);
 
     return ok;
 }
 
 bool testCheckBoard() {
     bool ok = true;
-    cardCellContent** theSpaceP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
+    puts("starting testCheckBoard");
+    cardCellContent** theBoardP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
     char testBoard[50] = {'W','3', 'R','7', 'B','3', 'Q','6', 'H','9', 'D','2', 'R','0', 'O','3', 'K','0', 'Y','2', 'I','1', 'D','7', 'S','2', 'M','9', 'W','2', 'R','9', 'S','3', 'Y','1', 'L','9', 'B','1', 'F','4', 'A','8', 'C','5', 'Y','3', 'E','1'};
-    initBoard(theSpaceP, 5);
+    genDefaultBoard(theBoardP, 5);
     for(int i = 0; i < 5; i++) {
        for(int j = 0; j < 5; j++) {
            //printf("Combo: %c%c\n", testBoard[(i*10+j*2)], testBoard[i*10+j*2+1]);
-           setSpace(theSpaceP, i, j, 5, testBoard[i*10+j*2], testBoard[i*10+j*2+1]);
+           setSpace(theBoardP, i, j, 5, testBoard[i*10+j*2], testBoard[i*10+j*2+1]);
        }
     }
-	puts("test board no match");
-    displayBoard(theSpaceP,5);
-	if(checkBoard(theSpaceP, 5)){
-		ok = false;
+	puts("test board no bingo");
+    // displayBoard(theBoardP,5);
+	if(checkBoard(theBoardP, 5)){
+		puts("test no bingo failed");
+	    ok = false;
 	}
 	// set second row to marked horizontally
 	for(int i = 0; i < 5; i++) {
-		cardCellContent** currCell = theSpaceP + 5 + i;
+		cardCellContent** currCell = theBoardP + 5 + i;
 		(*currCell)->letter += 32;
 	}
-	puts("test board match 2nd row horizontal");
-	displayBoard(theSpaceP, 5);
-	if(!checkBoard(theSpaceP, 5)) {
+	puts("test bingo 2nd row");
+	// displayBoard(theBoardP, 5);
+	if(!checkBoard(theBoardP, 5)) {
+	    puts("test bingo 2nd row failed");
 		ok = false;
 	}
 	//reset row and set 2nd column to marked
 	for(int i = 0; i < 5; i++) {
-		cardCellContent** currCell = theSpaceP + 5 + i;
+		cardCellContent** currCell = theBoardP + 5 + i;
 		(*currCell)->letter -= 32;
-		currCell = theSpaceP + i * 5 + 1;
+		currCell = theBoardP + i * 5 + 1;
 		(*currCell)->letter += 32;
 	}
-	puts("test board match 2nd column vertical");
-	displayBoard(theSpaceP, 5);
-	if(!checkBoard(theSpaceP, 5)) {
+	puts("test bingo 2nd column");
+	// displayBoard(theBoardP, 5);
+	if(!checkBoard(theBoardP, 5)) {
+	    puts("test bingo 2nd column failed");
 		ok = false;
 	}
 	// reset column and set diagonal to marked
 	for(int i = 0; i < 5; i++) {
-		cardCellContent** currCell = theSpaceP + i * 5 + 1;
+		cardCellContent** currCell = theBoardP + i * 5 + 1;
 		(*currCell)->letter -= 32;
-		currCell = theSpaceP + i * 5 + i;
+		currCell = theBoardP + i * 5 + i;
 		(*currCell)->letter += 32;
 	}
-	puts("test board match diagonal");
-	displayBoard(theSpaceP, 5);
-	if(!checkBoard(theSpaceP, 5)){
+	puts("test bingo diagonal");
+	// displayBoard(theBoardP, 5);
+	if(!checkBoard(theBoardP, 5)){
+	    puts("test bingo diagonal failed");
 		ok = false;
 	}
-    deleteBoard(theSpaceP,5);
 
+	// test for case found in production testing
+	puts("test with lowercase letters dispersed");
+	char testBoard2[50] = {'Y', '5', 'X', '3', 'P', '6', 'i', '2', 'Y', '8', 'V', '8', 'P', '7', 'H', '1', 'a', '4', 'T', '8', 'F', '2', 't', '9', 'L', '1', 'G', '1', 'e', '8', 'R', '6', 'V', '1', 'O', '6', 'M', '5', 'N', '4', 'F', '0', 'A', '1', 'U', '0', 'l', '2', 'U', '3'};
+    for(int i = 0; i < 5; i++) {
+        for(int j = 0; j < 5; j++) {
+            setSpace(theBoardP, i, j, 5, testBoard2[i*10+j*2], testBoard2[i*10+j*2+1]);
+        }
+    }
+    //displayBoard(theBoardP,5);
+    if(checkBoard(theBoardP, 5)){
+        puts("test lowercase dispersed no bingo failed");
+        ok = false;
+    }
+
+    deleteBoard(theBoardP,5);
 	if(ok) {
-		puts("Test checkBoard passed");
+		puts("Test checkBoard passed\n");
 	} else {
-		puts("Test checkBoard failed");
+		puts("Test checkBoard failed\n");
 	}
     return ok;
 }

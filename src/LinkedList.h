@@ -28,6 +28,7 @@ typedef struct
 LLNode* makeEmptyLinkedList();
 LLNode* removeFromList(LLNode* hp, cardCellContent* pP);
 void saveCardCellContent(LLNode* lp, cardCellContent* mp);
+cardCellContent* getCardCellContent(LLNode* lp, char gLetter, char gDigit);
 bool isEmpty(LLNode* lp);
 cardCellContent* dequeueLIFO(LLNode* lp);
 backFromDQFIFO* dequeueFIFO(LLNode* lp);

@@ -8,6 +8,7 @@
 #ifndef TEAMMEMBERS_H_
 #define TEAMMEMBERS_H_
 
+#define member1 = "Noah Plasse";
 
 
 #endif /* TEAMMEMBERS_H_ */
