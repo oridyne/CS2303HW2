@@ -6,6 +6,10 @@
  */
 
 #include "production.h"
+#include "LinkedList.h"
+#include "bingoBoard.h"
+#include "cardCell.h"
+#include <stdio.h>
 
 bool production(int argc, char* argv[])
 {
@@ -58,24 +62,51 @@ bool production(int argc, char* argv[])
 		LLNode* theListP = makeEmptyLinkedList();
 
 		//obtain space for bingo card
-
 		cardCellContent** theSpaceP = (cardCellContent**) malloc(5*5*sizeof(cardCellContent*));
 	    initBoard(theSpaceP, 5);
+		genRandBoard(theSpaceP, 5);
 
 	   // displayCard
         displayBoard(theSpaceP, 5);
-
 
         //the caller is going call some random values
 	    for(int i = 0; i<nCalls; i++)
 	    {
 	    	//get what caller calls
-	    	//is it a match?
-	    	//show/display the board
 	    	//save result on linked list
-	    	//did we win?
+			generateCall(theListP);
+	    	// show/display the board
+			displayBoard(theSpaceP,5);
+	    	// is it a match?
+			if(getYesNo("Is the call a match?")) {
+				// get current call
+				LLNode* temp = theListP;
+				char call[2] = { 'A', '0' };
+				while(temp != NULL) {
+					if(temp->next == NULL) {
+						call[0] = temp->cardCell->letter;
+						call[1] = temp->cardCell->digit;
+					}
+					temp = (LLNode*) temp->next;
+				}
+				cardCellContent** matchCell = findSpace(theSpaceP, call[0], call[1], 5);
+				if(matchCell == NULL) {
+					puts("call isn't a match");
+				} else {
+					puts("call is a match");
+					//set letter to lowercase
+					(*matchCell)->letter += 32;
+				}
+			}
+	    	// did we win?
+			if(checkBoard(theSpaceP, 5)){
+				puts("You won!"); 
+				break;
+			}
 	    }
-
+		if(nCalls > 0) {
+			printHistory(theListP);
+		}
 	    //printHistory
         deleteList(theListP);
 	    deleteBoard(theSpaceP, 5);

@@ -10,6 +10,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 
 typedef struct
@@ -25,6 +26,6 @@ cardCellContent* initCardCell(int nRow, int nCol, char nLetter, char nDigit);
 // "Caller" Functions
 char generateRandomDigit();
 char generateRandomLetter();
-bool isMarked(cardCellContent cardCell);
+void generateCall();
 
 #endif

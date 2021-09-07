@@ -220,7 +220,7 @@ void deleteList(LLNode* node) {
 void printHistory(LLNode *hp) {
     printf("Call history: ");
     LLNode* currNode = hp;
-    while(currNode != NULL) {
+    while(currNode != NULL && currNode->cardCell != NULL) {
         printf("%c%c ",currNode->cardCell->letter,currNode->cardCell->digit);
         currNode = (LLNode *) currNode->next;
     }

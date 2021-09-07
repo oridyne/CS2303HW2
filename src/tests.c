@@ -6,8 +6,11 @@
  */
 
 #include "tests.h"
+#include "bingoBoard.h"
+#include "cardCell.h"
 #include "production.h"
 #include "LinkedList.h"
+#include <stdio.h>
 
 bool tests()
 {
@@ -24,7 +27,7 @@ bool tests()
 	bool ok6 = testGenBoardNoDupe();
 	bool ok7 = testRemoveFromList();
 	bool ok8 = testCheckBoard();
-	answer = ok1 && ok2 && ok3 && ok4 && ok5 && ok6 && ok7;
+	answer = ok1 && ok2 && ok3 && ok4 && ok5 && ok6 && ok7 && ok8;
 	//answer = true;
 	return answer;
 }
@@ -115,23 +118,24 @@ bool testEnqueue() {
     int nCalls = 25;
     LLNode* theListP = makeEmptyLinkedList();
     for(int i = 0; i<nCalls; i++) {
-        bool duplicate = false;
-        char rLetter = 'A';
-        char rDigit = '0';
-        do {
-            rDigit = generateRandomDigit();
-            rLetter = generateRandomLetter();
-            duplicate = false;
-            LLNode* temp = theListP;
-            while(temp != NULL && !duplicate && temp->cardCell != NULL) {
-                if(rDigit == temp->cardCell->digit && rLetter == temp->cardCell->letter) {
-                    duplicate = true;
-                }
-                temp = (LLNode *) temp->next;
-            }
-        } while (duplicate);
-        cardCellContent* newCell = initCardCell(0,0,rLetter,rDigit);
-        saveCardCellContent(theListP, newCell);
+		generateCall(theListP);
+        /* bool duplicate = false; */
+        /* char rLetter = 'A'; */
+        /* char rDigit = '0'; */
+        /* do { */
+        /*     rDigit = generateRandomDigit(); */
+        /*     rLetter = generateRandomLetter(); */
+        /*     duplicate = false; */
+        /*     LLNode* temp = theListP; */
+        /*     while(temp != NULL && !duplicate && temp->cardCell != NULL) { */
+        /*         if(rDigit == temp->cardCell->digit && rLetter == temp->cardCell->letter) { */
+        /*             duplicate = true; */
+        /*         } */
+        /*         temp = (LLNode *) temp->next; */
+        /*     } */
+        /* } while (duplicate); */
+        /* cardCellContent* newCell = initCardCell(0,0,rLetter,rDigit); */
+        /* saveCardCellContent(theListP, newCell); */
     }
     printHistory(theListP);
 
@@ -318,9 +322,52 @@ bool testCheckBoard() {
            setSpace(theSpaceP, i, j, 5, testBoard[i*10+j*2], testBoard[i*10+j*2+1]);
        }
     }
+	puts("test board no match");
     displayBoard(theSpaceP,5);
+	if(checkBoard(theSpaceP, 5)){
+		ok = false;
+	}
+	// set second row to marked horizontally
+	for(int i = 0; i < 5; i++) {
+		cardCellContent** currCell = theSpaceP + 5 + i;
+		(*currCell)->letter += 32;
+	}
+	puts("test board match 2nd row horizontal");
+	displayBoard(theSpaceP, 5);
+	if(!checkBoard(theSpaceP, 5)) {
+		ok = false;
+	}
+	//reset row and set 2nd column to marked
+	for(int i = 0; i < 5; i++) {
+		cardCellContent** currCell = theSpaceP + 5 + i;
+		(*currCell)->letter -= 32;
+		currCell = theSpaceP + i * 5 + 1;
+		(*currCell)->letter += 32;
+	}
+	puts("test board match 2nd column vertical");
+	displayBoard(theSpaceP, 5);
+	if(!checkBoard(theSpaceP, 5)) {
+		ok = false;
+	}
+	// reset column and set diagonal to marked
+	for(int i = 0; i < 5; i++) {
+		cardCellContent** currCell = theSpaceP + i * 5 + 1;
+		(*currCell)->letter -= 32;
+		currCell = theSpaceP + i * 5 + i;
+		(*currCell)->letter += 32;
+	}
+	puts("test board match diagonal");
+	displayBoard(theSpaceP, 5);
+	if(!checkBoard(theSpaceP, 5)){
+		ok = false;
+	}
     deleteBoard(theSpaceP,5);
 
+	if(ok) {
+		puts("Test checkBoard passed");
+	} else {
+		puts("Test checkBoard failed");
+	}
     return ok;
 }
 

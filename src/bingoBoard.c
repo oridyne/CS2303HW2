@@ -45,6 +45,19 @@ bool setSpace(cardCellContent** theCardCell, int fRow, int fCol, int boardColSiz
     return true;
 }
 
+cardCellContent** findSpace(cardCellContent **theCardCell, char sLetter, char sDigit, int boardColSize) {
+    cardCellContent** retCell = NULL;
+    for(int row = 0; row<boardColSize; row++) {
+        for (int col = 0; col < boardColSize; col++) {
+           cardCellContent** currCell = theCardCell + row * boardColSize + col;
+           if((*currCell)->letter == sLetter && (*currCell)->digit == sDigit) {
+               retCell = currCell;
+           }
+        }
+    }
+    return retCell;
+}
+
 void genRandBoard(cardCellContent** theCardCell, int boardColSize) {
     for(int row = 0; row < boardColSize; row++) {
         for(int col = 0; col < boardColSize; col++) {

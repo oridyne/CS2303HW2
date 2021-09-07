@@ -5,4 +5,7 @@ cmake-build-wsl-debug
 .cproject
 .project
 .idea
+build
+vgcore*
+.gdb_history
 CMakeLists.txt

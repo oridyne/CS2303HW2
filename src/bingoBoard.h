@@ -26,6 +26,7 @@
 void initBoard(cardCellContent**, int);
 void displayBoard(cardCellContent**, int);
 bool setSpace(cardCellContent** theCardCell, int fRow, int fCol, int boardColSize, char sLetter, char sDigit);
+cardCellContent** findSpace(cardCellContent** theCardCell, char sLetter, char sDigit, int boardColSize);
 void genRandBoard(cardCellContent**, int);
 bool checkBoard(cardCellContent**, int);
 void deleteBoard(cardCellContent**, int);
