@@ -52,8 +52,7 @@ bool production(int argc, char *argv[]) {
 
     }// end of command line arguments
 
-    // Make the game play itself if you want to (makes testing less annoying)
-    bool lazy = getYesNo("\nMake game play itself?");
+    bool lazy = getYesNo("\nMake the game play itself? (removes player interaction and finds matches automatically)");
 
     // initialize a linked list
     LLNode *theListP = makeEmptyLinkedList();
@@ -73,7 +72,7 @@ bool production(int argc, char *argv[]) {
         // get what caller calls
         // save result on linked list
         generateCall(theListP);
-        // show/display the board
+        // show/display the board (if player interaction is on)
         if (!lazy) displayBoard(theBoardP, 5);
         // is it a match?
         // get current call
@@ -89,11 +88,13 @@ bool production(int argc, char *argv[]) {
         }
         // check if call exists on board
         cardCellContent **matchCell = findSpace(theBoardP, call[0], call[1], 5);
+        // Player interaction part
         if (!lazy) {
             bool gotMatch = false;
             while(!gotMatch) {
                 printf("Current Call: %c%c\n", call[0], call[1]);
                 if (getYesNo("Is the call a match?")) {
+                    // prompt for row and column
                     int row = getDigit("What row is it in?", 6)-1;
                     int column = getDigit("What column is it in?", 6)-1;
                     if(matchCell != NULL && (*matchCell)->row == row && (*matchCell)->col == column) {
@@ -111,6 +112,7 @@ bool production(int argc, char *argv[]) {
             }
             puts("");
         } else {
+            // if match is found, make match letter lowercase
             if (matchCell != NULL)(*matchCell)->letter += 32;
         }
         // did we win?

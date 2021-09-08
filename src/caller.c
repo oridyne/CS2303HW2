@@ -12,14 +12,17 @@ char generateRandomLetter() {
     return 'A' + (rand() % 26);
 }
 
+// Generates call and adds it to linkedList
 void generateCall(LLNode* lp) {
     bool duplicate = false;
-    char rLetter = 'A';
-    char rDigit = '0';
+    char rLetter;
+    char rDigit;
     do {
         rDigit = generateRandomDigit();
         rLetter = generateRandomLetter();
         duplicate = false;
+        // Check if combo exists in list already
+        // If it does, regenerate random combo
         if(getCardCellContent(lp, rLetter, rDigit) != NULL) {
             duplicate = true;
         };

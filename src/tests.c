@@ -24,7 +24,7 @@ bool tests()
 	if(ok2) ok3 = testFindSpace();
     ok4 = testMakeLList();
     if(ok4) {
-        ok5 = testGenerateCall();
+        ok5 = testEnqueue();
         ok6 = testPrintHistory();
     }
     ok7 = testGenBoardNoDupe();
@@ -155,9 +155,9 @@ bool testMakeLList()
 	return ok;
 }
 
-bool testGenerateCall() {
+bool testEnqueue() {
     bool ok = true;
-    puts("starting testGenerateCall");
+    puts("starting testEnqueue");
 
     LLNode* theListP = makeEmptyLinkedList();
     int nCalls = 25;
@@ -177,9 +177,9 @@ bool testGenerateCall() {
     }
     deleteList(theListP);
 	if(ok) {
-		puts("testGenerateCall did pass.\n");
+		puts("testEnqueue did pass.\n");
 	} else {
-		puts("testGenerateCall did not pass.\n");
+		puts("testEnqueue did not pass.\n");
 	}
 	return ok;
 }
@@ -243,48 +243,48 @@ bool testRemoveFromList()
 	case1 = ans;
 	deleteList(case1);
 	printf("testRemove case 4 with %d\n", ok); fflush(stdout);
+
 	// now case 5
-//	case1 = makeEmptyLinkedList();
-//	cell1 = (cardCellContent*) malloc(sizeof(cardCellContent));
-//	cell1->roomNumber = 1;
-//	saveCardCellContent(case1, cell1);
-//	cell2 = (cardCellContent*) malloc(sizeof(cardCellContent));
-//	cell2->roomNumber = 3;
-//	saveCardCellContent(case1, cell2);
-//	//puts("trying case 5");fflush(stdout);
-//	ans = removeFromList(case1, cell2);//ans should be equal to case1
-//	LLNode* theNext = (LLNode*) ans->next; //this is element where cell2 got attached
-//	cardCellContent* check = (cardCellContent*) 0;
-//	if (theNext)
-//	{
-//		check = theNext->cardCell; //this should be cell2, which should have been removed
-//	}
-//	//printf("testRemove returned from case 5\n"); fflush(stdout);
-//	if((ans != case1) || (check != (cardCellContent*)0))//disquiet
-//	{
-//		ok = false;
-//
-//	}
-//	//printf("ans == case1 is %d\n", ans==case1);
-//	//printf("check != 0 is %d\n", check != (cardCellContent*)0);
-//	printf("testRemove case 5 with %d\n", ok); fflush(stdout);
-//	//now case 6
-//	case1 = makeEmptyLinkedList();
-//	cell1 = (cardCellContent*) malloc(sizeof(cardCellContent));
-//	cell1->roomNumber = 1;
-//	saveCardCellContent(case1, cell1);
-//	cell2 = (cardCellContent*) malloc(sizeof(cardCellContent));
-//	cell2->roomNumber = 3;
-//	saveCardCellContent(case1, cell2);
-//	cardCellContent* another = (cardCellContent*) malloc(sizeof(cardCellContent));
-//	another->roomNumber=2;
-//	ans = removeFromList(case1, another);
-//	if((ans != case1))
-//	{
-//		ok = false;
-//
-//	}
-//	printf("testRemove case 6 with %d\n", ok); fflush(stdout);
+	case1 = makeEmptyLinkedList();
+	cell1 = initCardCell(0,0,'A','4');
+	saveCardCellContent(case1, cell1);
+	cell2 = initCardCell(0,5,'G','5');
+	saveCardCellContent(case1, cell2);
+	puts("trying case 5");fflush(stdout);
+	ans = removeFromList(case1, cell2);//ans should be equal to case1
+	LLNode* theNext = (LLNode*) ans->next; //this is element where cell2 got attached
+	cardCellContent* check = (cardCellContent*) 0;
+	if (theNext)
+	{
+		check = theNext->cardCell; //this should be cell2, which should have been removed
+	}
+	printf("testRemove returned from case 5\n"); fflush(stdout);
+	if((ans != case1) || (check != (cardCellContent*)0))//disquiet
+	{
+		ok = false;
+
+	}
+	printf("ans == case1 is %d\n", ans==case1);
+    puts("below might not work because cell2 was free'd");
+    printf("check != 0 is %d\n", check != (cardCellContent*)0);
+	printf("testRemove case 5 with %d\n", ok); fflush(stdout);
+    deleteList(case1);
+
+	//now case 6
+	case1 = makeEmptyLinkedList();
+	cell1 = initCardCell(0,0,'B','2');
+	saveCardCellContent(case1, cell1);
+	cell2 = initCardCell(0,0,'Y','6');
+	saveCardCellContent(case1, cell2);
+	cardCellContent* another = initCardCell(0,4,'G','7');
+	ans = removeFromList(case1, another);
+	if((ans != case1)) {
+		ok = false;
+	}
+	printf("testRemove case 6 with %d\n", ok); fflush(stdout);
+
+    free(another);
+	deleteList(case1);
     puts("");
 	return ok;
 }

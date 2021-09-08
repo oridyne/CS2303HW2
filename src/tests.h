@@ -17,7 +17,7 @@ bool testSetSpace();
 bool testFindSpace();
 bool testGotAdjacencyMatrix();
 bool testMakeLList();
-bool testGenerateCall();
+bool testEnqueue();
 bool testRemoveFromList();
 bool testPrintHistory();
 bool testGenBoardNoDupe();

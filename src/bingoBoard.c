@@ -6,6 +6,7 @@
  */
 #include "bingoBoard.h"
 
+// init board to A0
 void genDefaultBoard(cardCellContent** theCardCell, int boardColSize)
 {
 	for(int row = 0; row < boardColSize; row++)
@@ -62,13 +63,14 @@ void genRandBoard(cardCellContent** theCardCell, int boardColSize) {
     for(int row = 0; row < boardColSize; row++) {
         for(int col = 0; col < boardColSize; col++) {
             int currIndex = row * boardColSize + col;
-            char rLetter = 'A';
-            char rDigit = '0';
+            char rLetter;
+            char rDigit;
             bool duplicate = false;
             do {
                 rDigit = generateRandomDigit();
                 rLetter = generateRandomLetter();
                 duplicate = false;
+                // Not using findSpace as we don't want to traverse the entire length (we haven't created it all)
                 for(int i = 0; i < row * boardColSize + col; i++) {
                     cardCellContent** testCell = theCardCell + i;
                     if(rDigit == (*testCell)->digit && rLetter == (*testCell)->letter) {
@@ -76,6 +78,7 @@ void genRandBoard(cardCellContent** theCardCell, int boardColSize) {
                     }
                 }
             } while (duplicate);
+            // Init memory for cell
             cardCellContent* x = initCardCell(row, col, rLetter, rDigit);
             cardCellContent** currCell = theCardCell + currIndex;
             *currCell = x;
@@ -95,12 +98,14 @@ bool checkBoard(cardCellContent** theCardCell, int boardColSize) {
         for (int col = 0; col <  boardColSize; ++col) {
             cardCellContent** currentCellHor = theCardCell + row * boardColSize + col;
             cardCellContent** currentCellVer = theCardCell + col * boardColSize + row;
+            // Check for lowercase
             if((*currentCellHor)->letter >= 97) {
                 markCount[0]++;
             }
             if((*currentCellVer)->letter >= 97) {
                 markCount[1]++;
             }
+            // Check if all in line are lowercase
             if(markCount[0] == 5) {
                 printf("Bingo at row %d\n", row+1);
                 ans = true;
@@ -116,12 +121,14 @@ bool checkBoard(cardCellContent** theCardCell, int boardColSize) {
             int backCount = ((boardColSize - 1) - row);
             cardCellContent** currCellDiagP = theCardCell + row * boardColSize + row;
             cardCellContent** currCellDiagN = theCardCell + row * boardColSize + backCount;
+            // Lowercase check
             if((*currCellDiagP)-> letter >= 97) {
                 markCount[2]++;
             }
             if ((*currCellDiagN) -> letter >= 97) {
                 markCount[3]++;
             }
+            // Check if all in line are lowercase
             if(markCount[2] == 5 || markCount[3] == 5) {
                 printf("Bingo on diagonal\n");
                 ans = true;
@@ -129,8 +136,6 @@ bool checkBoard(cardCellContent** theCardCell, int boardColSize) {
         }
         if(ans) break;
     }
-
-
     return ans;
 }
 

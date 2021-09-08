@@ -55,8 +55,6 @@ void saveCardCellContent(LLNode* lp, cardCellContent* mp)
 		newList->cardCell = mp;
 		temp->next = (struct LLNode*)newList;
 		newList->prev = (struct LLNode*) temp;
-
-
 	}
 }
 
@@ -64,7 +62,7 @@ cardCellContent* getCardCellContent(LLNode* lp, char gLetter, char gDigit) {
     LLNode* temp = lp;
     cardCellContent* retP = NULL;
     bool found = false;
-
+    // traverse list until find input letter&digit otherwise function returns NULL ptr
     while(temp != NULL && found == false) {
         if(temp->cardCell) {
             if(gDigit == temp->cardCell->digit && gLetter == temp->cardCell->letter) {
@@ -86,15 +84,12 @@ cardCellContent* dequeueLIFO(LLNode* lp)
 	}
 	else
 	{
-
 		LLNode* temp = lp;
 		while(temp->next)
 		{
 			temp=(LLNode*)temp->next;
 		}
 		//now temp points to the last element
-
-
 		cardCell = temp->cardCell;
 		temp->cardCell = (cardCellContent*)0;
 
@@ -179,7 +174,8 @@ LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 				}
 				else //not of length 1
 				{
-//					puts("found it at first element of list with length > 1");fflush(stdout);
+					// puts("found it at first element of list with length > 1");fflush(stdout);
+                    // free both for no mem leaks
                     free(temp->cardCell);
 					free(temp);
 					altHead->prev=NULL;
@@ -188,7 +184,7 @@ LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 			}
 			else //not found at first location in list
 			{
-//				puts("found it not at first element");fflush(stdout);
+				// puts("found it not at first element");fflush(stdout);
 				//save the linkages
 				//found element has a next
 				//found element has a prev
@@ -206,6 +202,7 @@ LLNode* removeFromList(LLNode* hP, cardCellContent* pP)
 					nextPart->prev = (struct LLNode*) prevPart;
 				}
 				//puts("after handling the  previous of the next");fflush(stdout);
+				// free both card and the node ptr
                 free(temp->cardCell);
                 free(temp);
 			}//end of not found at first location
